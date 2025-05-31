@@ -1,6 +1,6 @@
 using Microsoft.UI.Xaml;
 
-namespace WinUIExample;
+namespace HDS;
 public partial class App : Application
 {
     public App()

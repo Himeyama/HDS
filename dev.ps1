@@ -1,11 +1,11 @@
-$csproj = ".\WinUIExample\WinUIExample.csproj"
-$appName = "WinUIExample"
+$csproj = ".\HDS\HDS.csproj"
+$appName = "HDS"
 $publisher = "ひかり"
-$execFile = "WinUIExample.exe"
+$execFile = "HDS.exe"
 $version = (Get-Date).ToString("yy.M.d")
 $date = (Get-Date).ToString("yyyyMMdd")
-$publishDir = "WinUIExample\publish"
-$muiIcon = "WinUIExample\Assets\App.ico"
+$publishDir = "HDS\publish"
+$muiIcon = "HDS\Assets\App.ico"
 
 $startMenuPath = [Environment]::GetFolderPath("Programs")
 
