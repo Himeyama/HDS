@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.IO.Compression;
 using System.Threading.Tasks;
 using Common;
 using Microsoft.UI.Xaml.Controls;
@@ -17,7 +18,7 @@ public sealed partial class InstallProgressPage : Page
         InitializeComponent();
     }
 
-    protected override void OnNavigatedTo(NavigationEventArgs e)
+    protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
 
@@ -30,38 +31,74 @@ public sealed partial class InstallProgressPage : Page
             InstallingDescription.Text = string.Format(InstallingDescription.Text, window.formalAppName);
 
             // mainWindow.packageFilePath からインストールパッケージを展開 (zip)
-            InstallPackage();
+            await InstallPackage();
+
+            InstallProgressBar.Value = 100;
+            InstallationFile.Text = "";
+
+            // 次のページに遷移
+            mainWindow.ContentFrame.Navigate(
+                typeof(DonePage),
+                mainWindow,
+                new Microsoft.UI.Xaml.Media.Animation.DrillInNavigationTransitionInfo()
+            );
         }
     }
 
-    async void InstallPackage()
+    async Task InstallPackage()
     {
         try
         {
-            string extractPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-            Directory.CreateDirectory(extractPath);
-            await Task.Run(() => System.IO.Compression.ZipFile.ExtractToDirectory(mainWindow.packageFilePath, extractPath));
-            InstallProgressBar.Value = 50;
+            string extractPath = mainWindow.installationPath;
+            int totalFiles = 0;
+            int currentFile = 0;
 
-            string destinationPath = mainWindow.installationPath;
-            if (Directory.Exists(destinationPath))
+            using (ZipArchive archive = ZipFile.OpenRead(mainWindow.packageFilePath))
             {
-                Directory.Delete(destinationPath, true);
+                totalFiles = archive.Entries.Count;
             }
-            Directory.CreateDirectory(destinationPath);
-            // foreach (string dirPath in Directory.GetDirectories(extractPath, "*", SearchOption.AllDirectories))
-            // {
-            //     Directory.CreateDirectory(dirPath.Replace(extractPath, destinationPath));
-            // }
-            // string[] files = Directory.GetFiles(extractPath, "*.*", SearchOption.AllDirectories);
 
-            // int count = 0;
-            // foreach (string filePath in files)
-            // {
-            //     File.Copy(filePath, filePath.Replace(extractPath, destinationPath), true);
-            //     count++;
-            //     // InstallProgressBar.Value = 50 + count / files.Length * 50;
-            // }
+            await Task.Run(() =>
+            {
+                if (Directory.Exists(extractPath))
+                {
+                    Directory.Delete(extractPath, true);
+                }
+                Directory.CreateDirectory(extractPath);
+                using ZipArchive archive = ZipFile.OpenRead(mainWindow.packageFilePath);
+                foreach (ZipArchiveEntry entry in archive.Entries)
+                {
+                    string filePath = Path.GetFullPath(Path.Combine(extractPath, entry.FullName));
+                    if (entry.Name == "" || Path.EndsInDirectorySeparator(entry.FullName))
+                    {
+                        continue;
+                    }
+                    string directoryPath = Path.GetDirectoryName(filePath);
+                    if (directoryPath != null && !Directory.Exists(directoryPath))
+                    {
+                        Directory.CreateDirectory(directoryPath); // Creates all directories in the path recursively
+                    }
+                    entry.ExtractToFile(filePath, true);
+                    currentFile++;
+
+                    if (mainWindow.DispatcherQueue.HasThreadAccess)
+                    {
+                        InstallProgressBar.Value = (double)currentFile / totalFiles * 100;
+                        InstallationFile.Text = filePath;
+                    }
+                    else
+                    {
+                        bool isQueued = mainWindow.DispatcherQueue.TryEnqueue(
+                            Microsoft.UI.Dispatching.DispatcherQueuePriority.Normal,
+                            () =>
+                            {
+                                InstallProgressBar.Value = (double)currentFile / totalFiles * 100;
+                                InstallationFile.Text = filePath;
+                            }
+                        );
+                    }
+                }
+            });
         }
         catch (Exception ex)
         {

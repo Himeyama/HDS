@@ -53,7 +53,11 @@
   <data name="Browse.Text" xml:space="preserve"><value>参照</value></data>
   <data name="InstallDescription.Text" xml:space="preserve"><value>{0} をインストールしています。しばらくお待ちください。</value></data>
   <data name="CancelConfirmText.Text" xml:space="preserve"><value>キャンセルしてもよろしいですか？</value></data>
-  <data name="ApplicationSetupText.Text" xml:space="preserve"><value>アプリケーションソフトウェアセットアップ</value></data>
+  <data name="ApplicationSetupText.Text" xml:space="preserve"><value>セットアップ</value></data>
   <data name="Lang.Text" xml:space="preserve"><value>ja</value></data>
   <data name="InvalidPath.Text" xml:space="preserve"><value>指定されたインストール先フォルダーが存在しません。有効なフォルダーを選択してください。</value></data>
+  <data name="SetupDoneTitle.Text" xml:space="preserve"><value>セットアップ完了</value></data>
+  <data name="SetupDoneDescription.Text" xml:space="preserve"><value>セットアップが完了しました。
+<!--  -->「完了」をクリックしセットアップを閉じます。</value></data>
+  <data name="Done.Text" xml:space="preserve"><value>完了</value></data>
 </root>

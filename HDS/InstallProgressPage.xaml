@@ -12,8 +12,9 @@
                     TextWrapping="Wrap"
                     Name="InstallingDescription" />
             </StackPanel>
-            <Grid Grid.Row="1" Margin="16, 16, 16, 0">
+            <Grid Grid.Row="1" Margin="16, 16, 16, 0" RowDefinitions="Auto, Auto">
                 <ProgressBar x:Name="InstallProgressBar" Value="0" />
+                <TextBlock Name="InstallationFile" Text="" TextWrapping="Wrap" Grid.Row="1" Margin="0, 8, 0, 0" />
             </Grid>
         </Grid>
     </Grid>

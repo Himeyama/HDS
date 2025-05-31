@@ -69,7 +69,7 @@ public sealed partial class SelectFolderPage : Page
         if (Directory.Exists(parentPath))
         {
             // インストール先フォルダが存在する場合は、確認ダイアログを表示
-            mainWindow.installationPath = parentPath;
+            mainWindow.installationPath = InstallationPathTextBox.Text;
         }
         else
         {

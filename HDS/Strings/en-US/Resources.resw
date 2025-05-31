@@ -53,7 +53,11 @@
   <data name="Browse.Text" xml:space="preserve"><value>Browse</value></data>
   <data name="InstallDescription.Text" xml:space="preserve"><value>Installing {0}. Please wait.</value></data>
   <data name="CancelConfirmText.Text" xml:space="preserve">Are you sure you want to cancel?<value></value></data>
-  <data name="ApplicationSetupText.Text" xml:space="preserve"><value>Application Software Setup</value></data>
+  <data name="ApplicationSetupText.Text" xml:space="preserve"><value>Setup</value></data>
   <data name="Lang.Text" xml:space="preserve"><value>en</value></data>
   <data name="InvalidPath.Text" xml:space="preserve"><value>The specified installation path does not exist. Please select a valid folder.</value></data>
+  <data name="SetupDoneTitle.Text" xml:space="preserve"><value>Setup Complete</value></data>
+  <data name="SetupDoneDescription.Text" xml:space="preserve"><value>Setup has been completed.
+<!--  -->Click "Done" to close the setup.</value></data>
+  <data name="Done.Text" xml:space="preserve"><value>Finish</value></data>
 </root>
