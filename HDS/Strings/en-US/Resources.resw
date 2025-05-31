@@ -23,4 +23,37 @@
   <data name="ZoomInText.Text" xml:space="preserve"><value>Ctrl + Plus (+)</value></data>
   <data name="ZoomOutText.Text" xml:space="preserve"><value>Ctrl + Minus (-)</value></data>
   <data name="AppTitleText.Text" xml:space="preserve"><value>App title</value></data>
+  <data name="Next.Text" xml:space="preserve"><value>Next</value></data>
+  <data name="Cancel.Text" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Back.Text" xml:space="preserve"><value>Back</value></data>
+  <data name="Agree.Text" xml:space="preserve"><value>I Agree</value></data>
+  <data name="SetupTitle.Text" xml:space="preserve"><value>{0} ({1}) Setup Wizard</value></data>
+  <data name="FirstPageDescription.Text" xml:space="preserve"><value>
+<!---->The setup will guide you through the installation of {0} ({1}).
+<!---->Before starting the setup, we recommend closing all other applications.
+<!---->This allows the setup to update system files without restarting the computer.
+<!----> 
+<!---->Click "Next" to continue.
+  </value></data>
+  <data name="LicenseAgreementTitle.Text" xml:space="preserve"><value>License Agreement</value></data>
+  <data name="LicenseInstructions.Text" xml:space="preserve"><value><!--
+  -->By clicking "I Agree", you agree to the terms and conditions contained in this agreement.
+  </value></data>
+  <data name="SelectFolderDescription.Text" xml:space="preserve"><value><!--
+    -->I will install {0} in the folder below.
+<!---->To install it in a different folder, please click "Browse" and select a folder.
+
+<!---->Click "Install" to start the installation.
+  </value></data>
+  <data name="SelectFolderTitle.Text" xml:space="preserve"><value>Select Installation Destination</value></data>
+  <data name="InstallationFolder.Text" xml:space="preserve"><value>Installation Folder:</value></data>
+  <data name="RequiredSpace.Text" xml:space="preserve"><value>Required Space: </value></data>
+  <data name="FreeSpace.Text" xml:space="preserve"><value>Free Space: </value></data>
+  <data name="Install.Text" xml:space="preserve"><value>Install</value></data>
+  <data name="Browse.Text" xml:space="preserve"><value>Browse</value></data>
+  <data name="InstallDescription.Text" xml:space="preserve"><value>Installing {0}. Please wait.</value></data>
+  <data name="CancelConfirmText.Text" xml:space="preserve">Are you sure you want to cancel?<value></value></data>
+  <data name="ApplicationSetupText.Text" xml:space="preserve"><value>Application Software Setup</value></data>
+  <data name="Lang.Text" xml:space="preserve"><value>en</value></data>
+  <data name="InvalidPath.Text" xml:space="preserve"><value>The specified installation path does not exist. Please select a valid folder.</value></data>
 </root>

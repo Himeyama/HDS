@@ -23,4 +23,37 @@
   <data name="ZoomInText.Text" xml:space="preserve"><value>Ctrl + プラス記号 (+)</value></data>
   <data name="ZoomOutText.Text" xml:space="preserve"><value>Ctrl + マイナス記号 (-)</value></data>
   <data name="AppTitleText.Text" xml:space="preserve"><value>アプリタイトル</value></data>
+  <data name="Next.Text" xml:space="preserve"><value>次へ</value></data>
+  <data name="Cancel.Text" xml:space="preserve"><value>キャンセル</value></data>
+  <data name="Back.Text" xml:space="preserve"><value>戻る</value></data>
+  <data name="Agree.Text" xml:space="preserve"><value>同意する</value></data>
+  <data name="SetupTitle.Text" xml:space="preserve"><value>{0} ({1}) セットアップ</value></data>
+  <data name="FirstPageDescription.Text" xml:space="preserve"><value><!--
+    -->{0} ({1}) のインストールをご案内します。
+<!---->セットアップを開始する前に、他のすべてのアプリケーションを終了することをお勧めします。
+<!---->これにより、コンピューターを再起動することなくシステムファイルを更新できます。
+<!---->
+<!---->続行するには「次へ」をクリックしてください。
+  </value></data>
+  <data name="LicenseAgreementTitle.Text" xml:space="preserve"><value>使用許諾契約</value></data>
+  <data name="LicenseInstructions.Text" xml:space="preserve"><value><!--
+  -->「同意する」をクリックすることにより、この契約に記載されている利用規約に同意したことになります。
+  </value></data>
+  <data name="SelectFolderDescription.Text" xml:space="preserve"><value><!--
+    -->{0} を以下のフォルダーにインストールします。
+<!---->別のフォルダーにインストールする場合は、「参照」をクリックしてフォルダーを選択してください。
+
+<!---->インストールを開始するには「インストール」をクリックしてください。
+  </value></data>
+  <data name="SelectFolderTitle.Text" xml:space="preserve"><value>インストール先フォルダーの選択</value></data>
+  <data name="InstallationFolder.Text" xml:space="preserve"><value>インストール先フォルダー:</value></data>
+  <data name="RequiredSpace.Text" xml:space="preserve"><value>必要な空き容量: </value></data>
+  <data name="FreeSpace.Text" xml:space="preserve"><value>空き容量: </value></data>
+  <data name="Install.Text" xml:space="preserve"><value>インストール</value></data>
+  <data name="Browse.Text" xml:space="preserve"><value>参照</value></data>
+  <data name="InstallDescription.Text" xml:space="preserve"><value>{0} をインストールしています。しばらくお待ちください。</value></data>
+  <data name="CancelConfirmText.Text" xml:space="preserve"><value>キャンセルしてもよろしいですか？</value></data>
+  <data name="ApplicationSetupText.Text" xml:space="preserve"><value>アプリケーションソフトウェアセットアップ</value></data>
+  <data name="Lang.Text" xml:space="preserve"><value>ja</value></data>
+  <data name="InvalidPath.Text" xml:space="preserve"><value>指定されたインストール先フォルダーが存在しません。有効なフォルダーを選択してください。</value></data>
 </root>
