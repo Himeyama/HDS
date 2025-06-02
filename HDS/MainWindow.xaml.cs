@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Common;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
@@ -20,6 +21,8 @@ public sealed partial class MainWindow : Window
     public string packageFilePath = "";
     public string version = "";
     public string installationPath = "";
+    public string publisher = "";
+    public int installFileSize = 0;
 
     public MainWindow()
     {
@@ -33,34 +36,61 @@ public sealed partial class MainWindow : Window
         {
             string fileName = Path.GetFileName(file);
             packageFilePath = file;
-            Match match = Regex.Match(fileName, @"^([\w]+)-(\d+\.\d+\.\d+)\.zip$");
+            Match match = Regex.Match(fileName, @"^([\w]+)-([\p{L}\p{N} ]+)-([\p{L}\p{N} ]+)-([\d]+\.[\d]+\.[\d]+)\.zip$");
             if (match.Success)
             {
-                appName = match.Groups[1].Value;
-                formalAppName = match.Groups[1].Value;
-                version = match.Groups[2].Value;
-                break;
-            }
-            match = Regex.Match(fileName, @"^([\w]+)-([\w\s]+)-([\d\.]+)\.zip$");
-            if (match.Success)
-            {
+                // TestApp-テスト アプリ-ひかり-1.0.0.zip
                 appName = match.Groups[1].Value;
                 formalAppName = match.Groups[2].Value;
-                version = match.Groups[3].Value;
+                publisher = match.Groups[3].Value;
+                version = match.Groups[4].Value;
                 break;
             }
         }
-        // ContentFrame.Content = new FirstPage();
+        if (appName == "" || formalAppName == "" || publisher == "")
+        {
+            Content = new TextBlock
+            {
+                Text = "Error: Invalid package file name format. Expected format: '<AppName>-<FormalName>-<Publisher>-<Version>.zip'.",
+                TextWrapping = TextWrapping.Wrap,
+                FontSize = 20,
+                Margin = new Thickness(16, 24, 16, 16),
+                Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Red)
+            };
+            return;
+        }
+        if (!CheckName(appName) || !CheckName(formalAppName) || !CheckName(publisher))
+        {
+            // Invalid app name or formal name
+            Content = new TextBlock
+            {
+                Text = "Error: Invalid app name or formal name. Names must not be empty, longer than 50 characters, and must not contain invalid characters.",
+                TextWrapping = TextWrapping.Wrap,
+                FontSize = 20,
+                Margin = new Thickness(16, 24, 16, 16),
+                Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Red)
+            };
+            return;
+        }
         ContentFrame.Navigate(typeof(FirstPage), this, new DrillInNavigationTransitionInfo());
+    }
 
-        // Navigate(typeof(HomePage));
-        // SetTitleBar(AppTitleBar);
-        // Title = AppTitleTextBlock.Text;
-
-        // Status.statusBar = StatusBar;
-        // Status.dispatcherQueue = DispatcherQueue;
-        // ZoomIn.KeyboardAcceleratorTextOverride = ZoomInText.Text;
-        // ZoomOut.KeyboardAcceleratorTextOverride = ZoomOutText.Text;
+    static bool CheckName(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+        {
+            return false;
+        }
+        if (name.Length > 50)
+        {
+            return false;
+        }
+        // Check for invalid characters: /:*?"'<>|\[]{};^=!#$%&`() 
+        if (Regex.IsMatch(name, @"[\/:\*\?""'<>|\\\[\]\{\};\^=!#\$%&\(\)`]"))
+        {
+            return false;
+        }
+        return true;
     }
 
     void SetWindowSize(int width, int height)
@@ -70,16 +100,6 @@ public sealed partial class MainWindow : Window
         AppWindow appWindow = AppWindow.GetFromWindowId(myWndId);
         appWindow.Resize(new SizeInt32(width, height));
     }
-
-    // void AutoSave_Toggled(object sender, RoutedEventArgs e)
-    // {
-    //     try{
-    //         EnableAutoSave.Visibility = AutoSave.IsOn ? Visibility.Visible : Visibility.Collapsed;
-    //         DisableAutoSave.Visibility = AutoSave.IsOn ? Visibility.Collapsed : Visibility.Visible;
-    //     }catch(Exception ex){
-    //         Status.AddMessage(ex.Message);
-    //     }
-    // }
 
     async void ClickOpen(object sender, RoutedEventArgs e)
     {

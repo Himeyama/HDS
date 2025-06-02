@@ -39,6 +39,7 @@ public sealed partial class SelectFolderPage : Page
             {
                 FileInfo fileInfo = new(mainWindow.packageFilePath);
                 double requiredGiB = fileInfo.Length / (1024.0 * 1024);
+                mainWindow.installFileSize = (int)fileInfo.Length;
                 RequiredSize.Text = $"{requiredGiB:F1} MiB";
             }
 

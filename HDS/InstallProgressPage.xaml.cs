@@ -1,11 +1,12 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
 using Common;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using Windows.System.Inventory;
+using Microsoft.Win32;
 
 namespace HDS;
 
@@ -60,9 +61,15 @@ public sealed partial class InstallProgressPage : Page
 
             await Task.Run(() =>
             {
-                if (Directory.Exists(extractPath))
+                string localAppData = Path.GetFullPath(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
+                string fullExtractPath = Path.GetFullPath(extractPath);
+
+                if (!string.Equals(localAppData.TrimEnd(Path.DirectorySeparatorChar), fullExtractPath.TrimEnd(Path.DirectorySeparatorChar), StringComparison.OrdinalIgnoreCase))
                 {
-                    Directory.Delete(extractPath, true);
+                    if (Directory.Exists(fullExtractPath))
+                    {
+                        Directory.Delete(fullExtractPath, true);
+                    }
                 }
                 Directory.CreateDirectory(extractPath);
                 using ZipArchive archive = ZipFile.OpenRead(mainWindow.packageFilePath);
@@ -99,11 +106,70 @@ public sealed partial class InstallProgressPage : Page
                     }
                 }
             });
+
+            RegistApp(
+                mainWindow.appName,
+                mainWindow.formalAppName,
+                mainWindow.publisher,
+                mainWindow.installationPath,
+                mainWindow.version
+            );
         }
         catch (Exception ex)
         {
             _ = Dialog.ShowError(mainWindow.Content, ex.Message);
             return;
         }
+    }
+
+    void RegistApp(string appName, string formalAppName, string publisher, string installPath, string version)
+    {
+        string smPrograms = Environment.GetFolderPath(Environment.SpecialFolder.StartMenu);
+        string execFile = $"{appName}.exe";
+        string date = DateTime.Now.ToString("yyyyMMdd");
+        int size = mainWindow.installFileSize / 1024; // Estimated size in KB
+
+        // ディレクトリ作成
+        string programPath = Path.Combine(smPrograms, "Programs", formalAppName);
+        Directory.CreateDirectory(programPath);
+
+        // ショートカット作成
+        CreateShortcut(Path.Combine(programPath, $"{formalAppName}.lnk"), Path.Combine(installPath, execFile));
+
+        // レジストリ登録
+        string registryKey = $@"Software\Microsoft\Windows\CurrentVersion\Uninstall\{appName}";
+        using RegistryKey key = Registry.CurrentUser.CreateSubKey(registryKey);
+        key.SetValue("DisplayName", formalAppName);
+        key.SetValue("UninstallString", $"\"{installPath}\\Uninstall.exe\"");
+        key.SetValue("Publisher", publisher);
+        key.SetValue("DisplayIcon", $"{installPath}\\{execFile},0");
+        key.SetValue("DisplayVersion", version);
+        key.SetValue("InstallDate", date);
+        key.SetValue("EstimatedSize", size, RegistryValueKind.DWord);
+    }
+
+    static void CreateShortcut(string shortcutPath, string targetPath)
+    {
+        // PowerShellスクリプトを動的に生成
+        string script = $@"
+            $WScriptShell = New-Object -ComObject WScript.Shell
+            $Shortcut = $WScriptShell.CreateShortcut('{shortcutPath}')
+            $Shortcut.TargetPath = '{targetPath}'
+            $Shortcut.Save()";
+        RunPowerShellScript(script);
+    }
+    
+    static void RunPowerShellScript(string script)
+    {
+        ProcessStartInfo psi = new()
+        {
+            FileName = "powershell.exe",
+            Arguments = $"-Command \"{script}\"",
+            RedirectStandardOutput = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+        using Process process = Process.Start(psi);
+        process.WaitForExit();
     }
 }
