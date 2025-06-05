@@ -114,7 +114,7 @@ public sealed partial class InstallProgressPage : Page
                 {
                     if (Directory.Exists("HDS"))
                     {
-                        CopyDirectory("HDS\\publish", Path.Join(localAppData, "HDS"));
+                        CopyDirectory("HDS", Path.Join(localAppData, "HDS"));
                     }
                 }                
 
