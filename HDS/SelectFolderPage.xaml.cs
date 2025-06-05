@@ -1,12 +1,9 @@
 using System;
 using System.IO;
-using System.Threading.Tasks;
-using System.Threading.Tasks.Dataflow;
 using Common;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using Windows.Graphics.Capture;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using WinRT.Interop;

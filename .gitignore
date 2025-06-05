@@ -402,3 +402,6 @@ FodyWeavers.xsd
 *.sln
 *.zip
 *.exe
+
+LICENSE.md
+log.txt

@@ -27,7 +27,7 @@ function Run() {
 }
 
 function Publish() {
-    $null = dotnet publish $csproj -c Release -p:Version=$version
+    dotnet publish $csproj -c Release -p:Version=$version
 }
 
 function Zip() {

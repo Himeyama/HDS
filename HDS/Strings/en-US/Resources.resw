@@ -60,4 +60,12 @@
   <data name="SetupDoneDescription.Text" xml:space="preserve"><value>Setup has been completed.
 <!--  -->Click "Done" to close the setup.</value></data>
   <data name="Done.Text" xml:space="preserve"><value>Finish</value></data>
+  <data name="Uninstall.Text" xml:space="preserve"><value>Uninstall</value></data>
+  <data name="UninstallTitle.Text" xml:space="preserve"><value>{0} ({1}) Uninstall</value></data>
+  <data name="UninstallPageDescription.Text" xml:space="preserve"><value><!--
+    -->This will start the uninstallation of {0} ({1}).
+<!---->To proceed, click "Uninstall".
+  </value></data>
+  <data name="UninstallDescription.Text" xml:space="preserve"><value>Uninstalling. Please wait.</value></data>
+  <data name="UninstallDoneDescription.Text" xml:space="preserve"><value>Uninstallation is complete.</value></data>
 </root>

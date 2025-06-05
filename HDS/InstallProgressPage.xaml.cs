@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Threading.Tasks;
 using Common;
 using Microsoft.UI.Xaml.Controls;
@@ -17,6 +18,36 @@ public sealed partial class InstallProgressPage : Page
     public InstallProgressPage()
     {
         InitializeComponent();
+    }
+
+    // Utility method to copy all files and subdirectories from one directory to another
+    static void CopyDirectory(string sourceDir, string destDir)
+    {
+        DirectoryInfo dir = new DirectoryInfo(sourceDir);
+        if (!dir.Exists)
+            throw new DirectoryNotFoundException($"Source directory not found: {sourceDir}");
+
+        // If destination exists, delete it first
+        if (Directory.Exists(destDir))
+        {
+            Directory.Delete(destDir, true);
+        }
+
+        Directory.CreateDirectory(destDir);
+
+        // Copy files
+        foreach (FileInfo file in dir.GetFiles())
+        {
+            string targetFilePath = Path.Combine(destDir, file.Name);
+            file.CopyTo(targetFilePath, true);
+        }
+
+        // Copy subdirectories
+        foreach (DirectoryInfo subDir in dir.GetDirectories())
+        {
+            string newDestinationDir = Path.Combine(destDir, subDir.Name);
+            CopyDirectory(subDir.FullName, newDestinationDir);
+        }
     }
 
     protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -62,6 +93,7 @@ public sealed partial class InstallProgressPage : Page
             await Task.Run(() =>
             {
                 string localAppData = Path.GetFullPath(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
+
                 string fullExtractPath = Path.GetFullPath(extractPath);
 
                 if (!string.Equals(localAppData.TrimEnd(Path.DirectorySeparatorChar), fullExtractPath.TrimEnd(Path.DirectorySeparatorChar), StringComparison.OrdinalIgnoreCase))
@@ -71,6 +103,21 @@ public sealed partial class InstallProgressPage : Page
                         Directory.Delete(fullExtractPath, true);
                     }
                 }
+
+                if (Directory.Exists("HDS\\publish"))
+                {
+                    // If the directory already exists, delete it
+
+                    CopyDirectory("HDS\\publish", Path.Join(localAppData, "HDS"));
+                }
+                else
+                {
+                    if (Directory.Exists("HDS"))
+                    {
+                        CopyDirectory("HDS\\publish", Path.Join(localAppData, "HDS"));
+                    }
+                }                
+
                 Directory.CreateDirectory(extractPath);
                 using ZipArchive archive = ZipFile.OpenRead(mainWindow.packageFilePath);
                 foreach (ZipArchiveEntry entry in archive.Entries)
@@ -124,6 +171,7 @@ public sealed partial class InstallProgressPage : Page
 
     void RegistApp(string appName, string formalAppName, string publisher, string installPath, string version)
     {
+        string localAppData = Path.GetFullPath(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
         string smPrograms = Environment.GetFolderPath(Environment.SpecialFolder.StartMenu);
         string execFile = $"{appName}.exe";
         string date = DateTime.Now.ToString("yyyyMMdd");
@@ -140,7 +188,7 @@ public sealed partial class InstallProgressPage : Page
         string registryKey = $@"Software\Microsoft\Windows\CurrentVersion\Uninstall\{appName}";
         using RegistryKey key = Registry.CurrentUser.CreateSubKey(registryKey);
         key.SetValue("DisplayName", formalAppName);
-        key.SetValue("UninstallString", $"\"{installPath}\\Uninstall.exe\"");
+        key.SetValue("UninstallString", $"powershell \"{localAppData}\\HDS\\HDS.exe\" --uninstall --app-name=\"{appName}\"");
         key.SetValue("Publisher", publisher);
         key.SetValue("DisplayIcon", $"{installPath}\\{execFile},0");
         key.SetValue("DisplayVersion", version);
@@ -158,6 +206,53 @@ public sealed partial class InstallProgressPage : Page
             $Shortcut.Save()";
         RunPowerShellScript(script);
     }
+
+    public static void DeleteShortcut(string shortcutPath)
+    {
+        if (File.Exists(shortcutPath))
+        {
+            File.Delete(shortcutPath);
+        }
+    }
+
+    // public static void DeleteRegistryKey(string appName)
+    // {
+    //     if (appName == "")
+    //     {
+    //         return;
+    //     }
+    //     string registryKey = $@"Software\Microsoft\Windows\CurrentVersion\Uninstall\{appName}";
+    //     try
+    //     {
+    //         using RegistryKey key = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall", writable: true);
+    //         if (key != null)
+    //         {
+    //             key.DeleteSubKey(appName, throwOnMissingSubKey: false);
+    //         }
+    //     }
+    //     catch (Exception)
+    //     {
+    //     }
+    // }
+
+    public static void DeleteRegistryKey(string appName)
+    {
+        if (string.IsNullOrWhiteSpace(appName)) return;
+
+        string registryPath = @"Software\Microsoft\Windows\CurrentVersion\Uninstall";
+        try
+        {
+            using RegistryKey key = Registry.CurrentUser.OpenSubKey(registryPath, writable: true);
+            if (key?.GetSubKeyNames().Contains(appName) == true)
+            {
+                key.DeleteSubKey(appName);
+            }
+        }
+        catch (Exception)
+        {
+        }
+    }
+
     
     static void RunPowerShellScript(string script)
     {

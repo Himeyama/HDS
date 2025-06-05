@@ -17,6 +17,7 @@ namespace HDS;
 public sealed partial class MainWindow : Window
 {
     public string appName = "";
+    public string uninstallAppName = "";
     public string formalAppName = "";
     public string packageFilePath = "";
     public string version = "";
@@ -27,6 +28,23 @@ public sealed partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+
+        string[] args = Environment.GetCommandLineArgs();
+        bool uninstall = false;
+        if (args.Length > 0)
+        {
+            foreach (string arg in args)
+            {
+                if (arg == "--uninstall")
+                {
+                    uninstall = true;
+                }
+                if (arg.StartsWith("--app-name="))
+                {
+                    uninstallAppName = arg.Substring("--app-name=".Length);
+                }
+            }
+        }
 
         ExtendsContentIntoTitleBar = true;
         SetWindowSize(1200, 800);
@@ -47,6 +65,25 @@ public sealed partial class MainWindow : Window
                 break;
             }
         }
+
+        if (uninstall)
+        {
+            if (uninstallAppName == "")
+            {
+                Content = new TextBlock
+                {
+                    Text = "Error: No package file found. Please provide a valid package file.",
+                    TextWrapping = TextWrapping.Wrap,
+                    FontSize = 20,
+                    Margin = new Thickness(16, 24, 16, 16),
+                    Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Red)
+                };
+                return;
+            }
+            ContentFrame.Navigate(typeof(Uninstall), this, new DrillInNavigationTransitionInfo());
+            return;
+        }
+
         if (appName == "" || formalAppName == "" || publisher == "")
         {
             Content = new TextBlock
@@ -70,6 +107,12 @@ public sealed partial class MainWindow : Window
                 Margin = new Thickness(16, 24, 16, 16),
                 Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Red)
             };
+            return;
+        }
+
+        if (uninstall)
+        {
+            ContentFrame.Navigate(typeof(Uninstall), this, new DrillInNavigationTransitionInfo());
             return;
         }
         ContentFrame.Navigate(typeof(FirstPage), this, new DrillInNavigationTransitionInfo());
