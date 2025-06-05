@@ -43,7 +43,8 @@ public sealed partial class Uninstall : Page
             );
             if (!Directory.Exists(uninstallationPath))
             {
-                UninstallPageDescription.Text += "\nUninstallation path does not exist.";
+                UninstallTitle.Text = "Uninstallation Error";
+                UninstallPageDescription.Text = "Uninstallation path does not exist.";
                 UninstallButton.IsEnabled = false;
                 return;
             }
@@ -56,6 +57,13 @@ public sealed partial class Uninstall : Page
                 {
                     formalAppName = key.GetValue("DisplayName") as string ?? "";
                     version = key.GetValue("DisplayVersion") as string ?? "";
+                }
+                else
+                {
+                    UninstallButton.IsEnabled = false;
+                    UninstallTitle.Text = "Uninstallation Error";
+                    UninstallPageDescription.Text = "The application is not installed or the registry key is missing.";
+                    return;
                 }
             }
             catch

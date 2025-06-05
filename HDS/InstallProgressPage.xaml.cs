@@ -104,21 +104,20 @@ public sealed partial class InstallProgressPage : Page
                     }
                 }
 
+                Directory.CreateDirectory(fullExtractPath);
+
                 if (Directory.Exists("HDS\\publish"))
                 {
-                    // If the directory already exists, delete it
-
-                    CopyDirectory("HDS\\publish", Path.Join(localAppData, "HDS"));
+                    CopyDirectory("HDS\\publish", Path.Join(fullExtractPath, "HDS"));
                 }
                 else
                 {
                     if (Directory.Exists("HDS"))
                     {
-                        CopyDirectory("HDS", Path.Join(localAppData, "HDS"));
+                        CopyDirectory("HDS", Path.Join(fullExtractPath, "HDS"));
                     }
-                }                
+                }
 
-                Directory.CreateDirectory(extractPath);
                 using ZipArchive archive = ZipFile.OpenRead(mainWindow.packageFilePath);
                 foreach (ZipArchiveEntry entry in archive.Entries)
                 {
@@ -188,7 +187,7 @@ public sealed partial class InstallProgressPage : Page
         string registryKey = $@"Software\Microsoft\Windows\CurrentVersion\Uninstall\{appName}";
         using RegistryKey key = Registry.CurrentUser.CreateSubKey(registryKey);
         key.SetValue("DisplayName", formalAppName);
-        key.SetValue("UninstallString", $"powershell \"{localAppData}\\HDS\\HDS.exe\" --uninstall --app-name=\"{appName}\"");
+        key.SetValue("UninstallString", $"powershell \"{localAppData}\\{appName}\\HDS\\Assets\\uninstall.ps1\" {appName}");
         key.SetValue("Publisher", publisher);
         key.SetValue("DisplayIcon", $"{installPath}\\{execFile},0");
         key.SetValue("DisplayVersion", version);
@@ -214,26 +213,6 @@ public sealed partial class InstallProgressPage : Page
             File.Delete(shortcutPath);
         }
     }
-
-    // public static void DeleteRegistryKey(string appName)
-    // {
-    //     if (appName == "")
-    //     {
-    //         return;
-    //     }
-    //     string registryKey = $@"Software\Microsoft\Windows\CurrentVersion\Uninstall\{appName}";
-    //     try
-    //     {
-    //         using RegistryKey key = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall", writable: true);
-    //         if (key != null)
-    //         {
-    //             key.DeleteSubKey(appName, throwOnMissingSubKey: false);
-    //         }
-    //     }
-    //     catch (Exception)
-    //     {
-    //     }
-    // }
 
     public static void DeleteRegistryKey(string appName)
     {
